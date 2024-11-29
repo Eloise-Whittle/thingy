@@ -8,6 +8,11 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+changes to my project 
+
+
+git config --global user.name "Eloise-Whittle" 
+git config --global user.email "ew680@cam.ac.uk"
 
 ## R Markdown
 
