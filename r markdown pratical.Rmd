@@ -1,0 +1,265 @@
+---
+title: "my_very_bad_intro"
+author: "Eloise Whittle"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+  word_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Heading 1 really big 
+
+some text here 
+
+i just love to write and talk (blah blah blah ... )
+
+
+## Background 
+
+some background text 
+
+### Figure 1 
+
+All good 
+
+# line text formatting
+
+**in bold** 
+*italic* or _italic_
+
+^superscript^
+
+~subscript~
+
+'inline' 
+
+~~strikethrough~~
+
+# line breaks 
+
+this is my first time trying R markdown  
+i have put two spaces, is this now on a new line?
+
+now i am trying to make a new line using \
+is this now on a new line?
+
+
+# Links 
+
+My paper has a Methods section. Please see here [link](#section-methods)
+
+
+
+# Data amd methods{#section-methods}
+
+## Link to a webpage 
+
+
+[text of link](https://training.cam.ac.uk/bioinformatics/event-timetable)
+
+
+## Footnotes 
+
+[^1]: This is the first footnote  
+
+[^2]: This is the second footnote
+
+
+# Lists 
+
+1. Item 1 
+2. Item 2
+3. Item 3
+    a. item 3a 
+        i. item 1
+        ii. item ii
+    b. item b 
+
+
+## unordered 
+
+* item 1 
+* item 2 
+    * item 3 
+        * Item 4 
+    * item 5 
+
+- item 1 
+    - item 1 
+    
+## Task lists 
+
+- [ ] an unchecked task 
+- [x] checked task 
+
+
+
+# Inserting Images 
+
+![Figure caption](path to image)
+
+
+
+
+# Tables 
+
+| Column 1    | Column 2    |
+| ----------- | ----------- |
+| Item 1,1    | Item 1,2    |
+| Item 2,1    | Item 2,2    |
+
+can create tables at [link of table generator](https://www.tablesgenerator.com/markdown_tables)  
+
+
+| gene  | expression |
+|-------|------------|
+| BCL2  | 2.2        |
+| MEF2b | 4.55       |
+| TP53  | 8.90       |
+| MYC   | 5.55       |
+
+
+
+## Blocks 
+
+> Example of a block 
+
+if you want to insert code blocks 
+
+```
+print("Hello world")
+x <- 1+2
+print(x)
+```
+
+# Adding a table of contence 
+
+output:
+  html_document:
+  toc: true 
+  toc_float: true
+ 
+at the beginning of the document under output.  
+
+
+
+
+
+# finally some code 
+
+
+```{r}
+# heading 2 - this is not a heading it is a comment as we are not in the world of r. 
+ cat("Hello World") 
+
+plot(pressure)
+
+``` 
+
+
+```{r}
+download.file(url="https://raw.githubusercontent.com/cambiotraining/reproducibility-training/master/data/gapminder_data.csv", destfile="data/gapminder_data.csv")
+```
+
+```{r, include = FALSE}
+
+cat("hello World")
+
+plot(pressure)
+```
+## Chunk lable 
+
+```{r data=munging, each=false}
+
+#load tidyverse 
+
+library(tidyverse) #used for data manipulation
+install.packages("rmarkdown")
+library(rmarkdown) # used for paged_table function
+install.packages("kableExtra")
+library(kableExtra) # used for table
+install.packages("ggpubr")
+library("ggpubr") # used for ggarrange function
+
+# read file into R 
+library(readr)
+pop_data <- read_csv("Data/gapminder_data.csv")
+
+``` 
+
+# plotting data and data munging
+
+```{r}
+pop_data
+
+plot(pop_data$lifeExp, pop_data$gdpPercap)
+
+```
+
+## Filtering data
+
+```{r}
+# select only countries in Europe  
+pop_data$continent == "Europe"
+
+pop_data[1,2]
+
+selected_frame <- pop_data[pop_data$continent == "Europe" & pop_data$year == 2007,]
+
+euro_data_tbl <- pop_data %>%
+  filter(continent == "Europ" & year == 2007) %>% 
+  select(-continent, - year) %>%
+  arrange(desc(lifeExp)) %>%
+  rename(Country = country, "Populaation Size" = pop, 
+         "Life Expectancy" = lifeExp, "GDP" = gdpPercap)
+
+```
+
+
+## Dynamic tables in R 
+
+```{r}
+head(selected_frame)
+
+install.packages("kableExtra")
+library(kableExtra)
+
+selected_frame %>%
+  kbl(caption = "Pop Data Selected") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", full_width = F, font = "Arial"))
+
+```
+## Challange 
+
+
+```{r}
+euro_data_fig <- pop_data %>%
+  filter(continent == "Europe") %>%
+  mutate(year = as.factor(year))
+
+euro_plot <- ggplot(euro_data_fig, aes(x = year, y = lifeExp)) + geom_violin()
+euro_plot
+
+```
+
+
+## arranging plots next to each other
+
+```{r}
+uk_data_fig <- pop_data %>%
+  filter(country == "United Kingdom")
+
+uk_plot <- ggplot(uk_data_fig, aes(y = lifeExp, x = year)) + geom_point()
+uk_plot
+
+ggarrange(euro_plot , uk_plot,labels = c("A", "B"))
+
+
+```
